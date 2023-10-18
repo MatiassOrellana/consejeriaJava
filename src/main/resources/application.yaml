@@ -1,0 +1,22 @@
+# ebean configuration
+ebean:
+  dumpMetricsOnShutdown: true
+  dumpMetricsOptions: loc,sql,hash
+  ddl:
+    generate: true #contryue la base de datos por mi
+    run: true #una vez la base de datos esta estable, se cambia a false
+  debug:
+    sql: true #se apaga cuando cuando se inicia la web?
+    lazyload: true
+  logging: all
+
+# database configuration
+datasource:
+  db:
+    username: conserjeria
+    password: 79z#5RX&qq5z
+    platform: sqlite # h2, postgres, mysql, oracle, sqlserver
+    # cada base de datos tiene diferencias
+    ddlMode: dropCreate # none | dropCreate | migrations
+    dbName: conserjeria
+    url: jdbc:sqlite:conserjeria.db
