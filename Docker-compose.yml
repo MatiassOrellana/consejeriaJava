@@ -1,0 +1,14 @@
+version: "3"
+services:
+  my-web-app-db:
+    image: mariadb
+    environment:
+      - MARIADB_ROOT_PASSWORD=Estoy
+      - MARIADB_DATABASE=Conserjeria
+
+  my-web-app:
+    build: .
+    ports:
+      - "8080:8080"
+    depends_on:
+      - my-web-app-db

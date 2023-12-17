@@ -5,16 +5,12 @@
 package cl.ucn.disc.as.dao;
 
 import cl.ucn.disc.as.model.Persona;
-import cl.ucn.disc.as.model.query.QPersona;
 import io.ebean.Finder;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.Optional;
 
 /**
  * The Finder of Persona.
  *
- * @author Diego Urrutia-Astorga.
+ * @author Matias Orellana.
  */
 public class PersonaFinder extends Finder<Long, Persona> {
 
@@ -33,8 +29,10 @@ public class PersonaFinder extends Finder<Long, Persona> {
      * @return the Persona.
      */
 
+    /**
     //todo lo del rut se ha cambiado a string
     public Optional<Persona> byRut(@NotNull String rut) {
         return new QPersona().rut.eq(rut).findOneOrEmpty();
     }
+     */
 }

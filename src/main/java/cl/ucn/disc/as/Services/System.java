@@ -9,6 +9,7 @@ package cl.ucn.disc.as.Services;
 import cl.ucn.disc.as.model.*;
 
 import java.util.Date;
+import java.util.List;
 
 public interface System {
 
@@ -27,4 +28,6 @@ public interface System {
     public Contrato realizarContrato(Persona dueño, Departamento departamento, Date fechaPago, Contrato contrato);
 
     public Contrato realizarContrato(Long idPersona ,Long idDepartamento, Date fechaPago, Contrato contrato);
+
+    public List<Persona> getPersonas();
 }

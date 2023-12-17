@@ -1,48 +1,70 @@
 package cl.ucn.disc.as.controllers;
 
-import cl.ucn.disc.as.Services.PersonaGrpcServiceGrpcImplBase;
-import cl.ucn.disc.as.Services.PersonaGrpcServiceImpl;
+import cl.ucn.disc.as.Services.SystemImpl;
 import cl.ucn.disc.as.model.Persona;
+import cl.ucn.disc.as.model.exceptions.IllegalDomainException;
+import io.ebean.DB;
+import io.grpc.ManagedChannel;
+import io.grpc.ManagedChannelBuilder;
+import io.javalin.Javalin;
+import io.javalin.http.NotFoundResponse;
 
 import java.util.Optional;
 
-public class WebController {
+public final class WebController implements RoutesConfigurator {
 
-    app.get("/api/personas/rut/{rut}", ctx => {
+    private final SystemImpl sistema;
 
-        String rut = ctx.pathParam("rut");
-        Optional<Persona> oPersona = this.sistema.getPersona(rut);
-        ctx.json(oPersona.orElseThrow(() => new NotFoundResponse("Persona no encontrada: " + rut)));
 
-    });
+    public WebController() {
+        this.sistema = new SystemImpl(DB.getDefault());
+    }
 
-    app.get("/api/grpc/personas/rut/{rut}", ctx => {
+    @Override
+    public void configure(final Javalin app){
 
-        String rut = ctx.pathParam("rut");
+        app.get("/api/personas", ctx -> {
 
-        //channel
-        ManagedChannel channel = ManagedChannelBuilder
-                .forAddress("127.0.0.1", 3337)
-                .usePlaintext()
-                .build();
-        //stub
-        PersonaGrpcServiceGrpc.PersonaGrpcServiceBlockingStub stub =
-                PersonaGrpcServiceGrpc.newBlockingStub(channel);
-        //call the grpc
-        PersonaGrpcResponse response = stub.retrieve(PersonaGrpcRequest
-                .newBuilder()
-                .setRut("200408195")
-                .build());
+            ctx.json(this.sistema.getPersonas());
 
-        PersonaGrpc personaGrpc = response.getPersona();
+        });
 
-        Optional<Persona> oPersona = Optional.of(Persona.builder()
+        app.get("/api/grpc/personas/rut/{rut}", ctx -> {
+
+            String rut = ctx.pathParam("rut");
+
+            //channel
+            ManagedChannel channel = ManagedChannelBuilder
+                    .forAddress("localhost", 3337)
+                    .usePlaintext()
+                    .build();
+            //stub
+            PersonaGrpcServiceGrpc.PersonaGrpcServiceBlockingStub stub =
+                    PersonaGrpcServiceGrpc.newBlockingStub(channel);
+            //call the grpc
+            PersonaGrpcResponse response = stub.retrieve(PersonaGrpcRequest
+                    .newBuilder()
+                    .setRut("200408195")
+                    .build());
+
+            PersonaGrpc personaGrpc = response.getPersona();
+
+            Optional<Persona> oPersona = null;
+            try {
+                oPersona = Optional.of(Persona.builder()
                         .rut(personaGrpc.getRut())
                         .nombre(personaGrpc.getNombre())
                         .apellidos(personaGrpc.getApellidos())
                         .email(personaGrpc.getEmail())
                         .build());
+            } catch (IllegalDomainException e) {
+                throw new RuntimeException(e);
+            }
 
-        ctx.json(oPersona.orElseThrow(() => new NotFoundResponse("no se encontro a la persona con ese rut: " + rut)));
+            ctx.json(oPersona.orElseThrow(() -> new NotFoundResponse("no se encontro a la persona con ese rut: " + rut)));
+
+        });
+
+    }
 
 }

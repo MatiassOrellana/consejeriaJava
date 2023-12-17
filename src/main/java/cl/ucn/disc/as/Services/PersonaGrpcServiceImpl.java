@@ -1,9 +1,10 @@
 package cl.ucn.disc.as.Services;
-import io.grpc.Server;
-import io.grpc.ServerBuilder;
-import cl.ucn.disc.as.model.Persona;
 
-public final class PersonaGrpcServiceImpl extends PersonaGrpcServiceGrpcImplBase{
+import io.grpc.stub.StreamObserver;
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
+public final class PersonaGrpcServiceImpl extends PersonaGrpcServiceGrpc.PersonaGrpcServiceImplBase {
 
     @Override
     public void retrieve(PersonaGrpcRequest request, StreamObserver<PersonaGrpcResponse> responseObserver){

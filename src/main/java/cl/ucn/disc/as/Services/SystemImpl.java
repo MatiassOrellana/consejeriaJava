@@ -4,7 +4,6 @@ import cl.ucn.disc.as.model.*;
 import cl.ucn.disc.as.model.exceptions.SystemException;
 import io.ebean.Database;
 import io.ebean.PersistenceIOException;
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 
@@ -19,10 +18,8 @@ public class SystemImpl implements System {
      */
     private final Database database;
 
-    @Getter
     private List<Contrato> contratos;
 
-    @Getter
     private List<Persona> personas;
 
     private List<Pago> pagos;
@@ -160,5 +157,11 @@ public class SystemImpl implements System {
 
         return pagos;
 
+    }
+
+    @Override
+    public List<Persona> getPersonas() {
+        //TODO: Implement offset and max rows
+        return database.find(Persona.class).findList();
     }
 }

@@ -1,0 +1,4 @@
+FROM openjdk:11
+COPY src/main/java/ /cl/ucn/disc/as
+WORKDIR /
+CMD java Main

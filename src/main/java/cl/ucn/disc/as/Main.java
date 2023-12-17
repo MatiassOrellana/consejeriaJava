@@ -3,21 +3,22 @@ package cl.ucn.disc.as;
 import cl.ucn.disc.as.Services.PersonaGrpcServiceImpl;
 import cl.ucn.disc.as.Services.System;
 import cl.ucn.disc.as.Services.SystemImpl;
-import cl.ucn.disc.as.dao.PersonaFinder;
-import cl.ucn.disc.as.model.*;
+import cl.ucn.disc.as.controllers.ApiRestServer;
+import cl.ucn.disc.as.controllers.WebController;
+import cl.ucn.disc.as.model.Departamento;
+import cl.ucn.disc.as.model.Edificio;
+import cl.ucn.disc.as.model.Pago;
+import cl.ucn.disc.as.model.Persona;
 import cl.ucn.disc.as.model.exceptions.IllegalDomainException;
 import io.ebean.DB;
 import io.ebean.Database;
-import io.ebean.config.JsonConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.joda.time.LocalDate;
+import io.grpc.Server;
+import io.grpc.ServerBuilder;
 
 import javax.management.MBeanServerBuilder;
-import java.lang.*;
-
 import java.io.IOException;
-import java.util.Date;
-import java.util.Optional;
 
 /**
  * The Main
@@ -105,19 +106,19 @@ public class Main {
 
         log.debug("Done.  ");
 
-        log.debug("Starting Main with library path: {}", System.getProperty("java.library.path"));
+        //log.debug("Starting Main with library path: {}", System.getProperty("java.library.path"));
 
         // empieza la api server
         log.debug("Empezando apirest server ..");
 
-        Javalin app = ApiRestServer.start(7070, new WebController());
+        ApiRestServer.start(7070, new WebController());
 
         //stop the API Rest Server
         //app.stop();
 
         // Start the gRPC server
         log.debug("Starting the gRPC server ..");
-        Server server = MBeanServerBuilder
+        Server server = ServerBuilder
                 .forPort(3337)
                 .addService(new PersonaGrpcServiceImpl())
                 .build();
